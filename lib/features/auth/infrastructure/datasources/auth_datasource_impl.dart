@@ -1,68 +1,72 @@
 import 'package:dio/dio.dart';
 import 'package:teslo_app/config/config.dart';
-
 import 'package:teslo_app/features/auth/domain/domain.dart';
 import 'package:teslo_app/features/auth/infrastructure/infrastructure.dart';
 
-class AuthDatasourceImpl extends AuthDatasource {
+class AuthDataSourceImpl extends AuthDataSource {
+
   final dio = Dio(
-    BaseOptions(baseUrl: Enviroment.apiUrl),
+    BaseOptions(
+    baseUrl: Environment.apiUrl,
+  )
   );
 
   @override
   Future<User> checkAuthStatus(String token) async {
+    
     try {
+      
       final response = await dio.get('/auth/check-status',
-          options: Options(
-            headers: {
-              'Authorization': 'Bearer $token',
-            },
-          ));
+          options: Options(headers: {
+            'Authorization': 'Bearer $token'}));
 
-      final user = UserMapper.userApiV1ResponseToEntity(response.data);
-
+      final user = UserMapper.userJsonToEntity(response.data);
       return user;
-    } on DioException catch (e) {
-      if (e.type == DioExceptionType.connectionTimeout) {
-        throw ConnectionTimeout();
-      }
 
-      throw CustomError();
+
+    } on DioError catch (e) {
+      if (e.response?.statusCode == 401) {
+        throw CustomError('Token incorrecto');
+      }
+      throw Exception();
     } catch (e) {
-      throw CustomError();
+      throw Exception();
     }
+
   }
 
   @override
   Future<User> login(String email, String password) async {
+    
     try {
       final response = await dio.post('/auth/login', data: {
         'email': email,
-        'password': password,
+        'password': password
       });
 
-      final user = UserMapper.userApiV1ResponseToEntity(response.data);
-
+      final user = UserMapper.userJsonToEntity(response.data);
       return user;
-    } on DioException catch (e) {
-      //   print(e);
+      
+    } on DioError catch (e) {
       if (e.response?.statusCode == 401) {
-        throw WrongCredentials();
+        throw CustomError(
+            e.response?.data['message'] ?? 'Credenciales incorrectas');
       }
-
-      if (e.type == DioExceptionType.connectionTimeout) {
-        throw ConnectionTimeout();
+      if (e.type == DioErrorType.connectionTimeout) {
+        throw CustomError('Revisar conexión a internet');
       }
-
-      throw CustomError();
+      throw Exception();
     } catch (e) {
-      throw CustomError();
+      throw Exception();
     }
+
+
   }
 
   @override
-  Future<User> register(String email, String password, String fullName) async {
+  Future<User> register(String email, String password, String fullName) {
     // TODO: implement register
     throw UnimplementedError();
   }
+  
 }

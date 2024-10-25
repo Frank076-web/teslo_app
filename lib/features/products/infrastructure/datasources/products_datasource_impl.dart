@@ -1,56 +1,50 @@
 import 'package:dio/dio.dart';
 import 'package:teslo_app/config/config.dart';
-
 import 'package:teslo_app/features/products/domain/domain.dart';
-import 'package:teslo_app/features/products/infrastructure/infrastructure.dart';
 
-class ProductsDatasourceImpl implements ProductsDatasource {
+import '../mappers/product_mapper.dart';
+
+class ProductsDatasourceImpl extends ProductsDatasource {
+
   late final Dio dio;
-  final String accesToken;
+  final String accessToken;
 
-  ProductsDatasourceImpl({required this.accesToken})
+  ProductsDatasourceImpl({required this.accessToken})
       : dio = Dio(BaseOptions(
-          baseUrl: Enviroment.apiUrl,
-          headers: {
-            'Authorization': 'Bearer $accesToken',
-          },
-        ));
+            baseUrl: Environment.apiUrl,
+            headers: {
+        'Authorization': 'Bearer $accessToken'}));
+
 
   @override
-  Future<List<Product>> createUpdateProduct(Map<String, dynamic> productLike) {
+  Future<Product> createUpdateProduct(Map<String, dynamic> productLike) {
     // TODO: implement createUpdateProduct
     throw UnimplementedError();
   }
 
   @override
-  Future<Product> findProductsById(String id) {
-    // TODO: implement findProductsById
+  Future<Product> getProductById(String id) {
+    // TODO: implement getProductById
     throw UnimplementedError();
   }
 
   @override
-  Future<List<Product>> findProductsByPage(
+  Future<List<Product>> getProductsByPage(
       {int limit = 10, int offset = 0}) async {
-    final response = await dio.get<List>(
-      '/products',
-      queryParameters: {
-        'limit': limit,
-        'offset': offset,
-      },
-    );
-
+    final response =
+        await dio.get<List>('/products?limit=$limit&offset=$offset');
     final List<Product> products = [];
-
     for (final product in response.data ?? []) {
-      products.add(ProductsMapper.productApiV1ResponseToEntity(product));
+      products.add(ProductMapper.jsonToEntity(product));
     }
 
     return products;
   }
 
   @override
-  Future<List<Product>> searchProductsByTerm(String term) {
-    // TODO: implement searchProductsByTerm
+  Future<List<Product>> searchProductByTerm(String term) {
+    // TODO: implement searchProductByTerm
     throw UnimplementedError();
   }
+
 }

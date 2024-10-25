@@ -1,2 +1,3 @@
-export 'input_email.dart';
-export 'input_password.dart';
+
+export 'email.dart';
+export 'password.dart';

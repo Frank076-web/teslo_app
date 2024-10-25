@@ -29,7 +29,7 @@ class AppTheme {
     ///* Buttons
     filledButtonTheme: FilledButtonThemeData(
       style: ButtonStyle(
-        textStyle: WidgetStatePropertyAll(
+        textStyle: MaterialStatePropertyAll(
           GoogleFonts.montserratAlternates()
             .copyWith(fontWeight: FontWeight.w700)
           )
