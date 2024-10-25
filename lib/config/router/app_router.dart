@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:teslo_app/config/config.dart';
 import 'package:teslo_app/features/products/products.dart';
-import 'package:teslo_app/features/auth/providers/providers.dart';
 
 final goRouterProvider = Provider((ref) {
   final goRouterNotifier = ref.read(goRouterNotifierProvider);

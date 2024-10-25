@@ -15,7 +15,7 @@ class ProductsMapper {
       gender: json['gender'],
       tags: List<String>.from(json['tags'].map((tag) => tag)),
       images: List<String>.from(
-        json['images'].map(ImagesUtils.parseImageUrl),
+        json['images'].map((imageurl) => ImagesUtils.parseImageUrl(imageurl)),
       ),
       user: UserMapper.userApiV1ResponseToEntity(json['user']),
     );
